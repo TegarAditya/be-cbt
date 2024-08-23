@@ -1,0 +1,1 @@
+export const AVAILABLE_CPU_COUNT = navigator.hardwareConcurrency;

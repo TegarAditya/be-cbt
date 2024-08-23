@@ -1,0 +1,500 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["relationJoins"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model berita {
+  id_berita     Int     @id @default(autoincrement())
+  id_mapel      Int
+  sesi          String  @db.VarChar(10)
+  ruang         String  @db.VarChar(20)
+  jenis         String  @db.VarChar(30)
+  ikut          String? @db.VarChar(10)
+  susulan       String? @db.VarChar(10)
+  no_susulan    String? @db.Text
+  mulai         String? @db.VarChar(10)
+  selesai       String? @db.VarChar(10)
+  nama_proktor  String? @db.VarChar(50)
+  nip_proktor   String? @db.VarChar(50)
+  nama_pengawas String? @db.VarChar(50)
+  nip_pengawas  String? @db.VarChar(50)
+  catatan       String? @db.Text
+  tgl_ujian     String? @db.VarChar(20)
+}
+
+model file_pendukung {
+  id_file     Int     @id @default(autoincrement())
+  id_mapel    Int?    @default(0)
+  nama_file   String? @db.VarChar(50)
+  status_file Int?
+}
+
+model jawaban {
+  id_jawaban Int     @id @default(autoincrement())
+  id_siswa   Int
+  id_mapel   Int
+  id_soal    Int
+  id_ujian   Int
+  jawaban    String? @db.Char(1)
+  jawabx     String? @db.Char(1)
+  jenis      Int
+  esai       String? @db.Text
+  nilai_esai Int     @default(0)
+  ragu       Int     @default(0)
+}
+
+model jawaban_tugas {
+  id_jawaban     Int       @id @default(autoincrement())
+  id_siswa       Int?
+  id_tugas       Int?
+  jawaban        String?   @db.LongText
+  file           String?   @db.VarChar(255)
+  tgl_dikerjakan DateTime? @db.DateTime(0)
+  tgl_update     DateTime? @default(now()) @db.Timestamp(0)
+  nilai          String?   @db.VarChar(5)
+  status         Int?
+}
+
+model jenis {
+  id_jenis String  @id @db.VarChar(30)
+  nama     String  @db.VarChar(50)
+  status   String? @db.VarChar(20)
+}
+
+model jurusan {
+  jurusan_id      String  @id @db.VarChar(25)
+  nama_jurusan_sp String? @db.VarChar(100)
+  kurikulum       String? @db.VarChar(120)
+  jurusan_sp_id   String? @db.VarChar(50)
+  kurikulum_id    String? @db.VarChar(20)
+  sekolah_id      String? @db.VarChar(50)
+}
+
+model kelas {
+  id_kelas             String  @id @db.VarChar(11)
+  level                String  @db.VarChar(20)
+  nama                 String  @db.VarChar(30)
+  rombongan_belajar_id String? @db.VarChar(50)
+  semester_id          String? @db.VarChar(10)
+}
+
+model level {
+  kode_level           String  @id @db.VarChar(5)
+  keterangan           String  @db.VarChar(50)
+  rombongan_belajar_id String? @db.VarChar(50)
+}
+
+model log {
+  id_log   Int    @id @default(autoincrement())
+  id_siswa Int
+  type     String @db.VarChar(20)
+  text     String @db.VarChar(20)
+  date     String @db.VarChar(20)
+}
+
+model mapel {
+  id_mapel    Int      @id @default(autoincrement())
+  kode        String   @default("0") @db.VarChar(255)
+  idpk        String   @db.VarChar(255)
+  idguru      String   @db.VarChar(3)
+  nama        String   @db.VarChar(50)
+  jml_soal    Int
+  jml_esai    Int      @default(0)
+  tampil_pg   Int
+  tampil_esai Int      @default(0)
+  bobot_pg    Int
+  bobot_esai  Int      @default(0)
+  level       String   @db.VarChar(5)
+  opsi        Int
+  kelas       String   @db.VarChar(255)
+  date        DateTime @default(now()) @db.Timestamp(0)
+  status      String   @db.VarChar(2)
+  kkm         Int?
+  soal_agama  String?  @db.VarChar(50)
+  soal        soal[]
+}
+
+model mata_pelajaran {
+  kode_mapel        String  @id @db.VarChar(20)
+  nama_mapel        String  @db.VarChar(50)
+  mata_pelajaran_id String? @db.VarChar(10)
+}
+
+model materi {
+  id_materi Int      @id @default(autoincrement())
+  id_guru   Int      @default(0)
+  kelas     String   @db.Text
+  mapel     String   @db.VarChar(255)
+  judul     String   @db.VarChar(50)
+  materi    String?  @db.LongText
+  file      String?  @db.VarChar(255)
+  tgl_mulai DateTime @db.DateTime(0)
+  youtube   String?  @db.VarChar(255)
+  tgl       DateTime @default(now()) @db.Timestamp(0)
+  status    Int?
+}
+
+model nilai {
+  id_nilai          Int     @id @default(autoincrement())
+  id_ujian          Int
+  id_mapel          Int
+  id_siswa          Int
+  kode_ujian        String  @db.VarChar(30)
+  ujian_mulai       String  @db.VarChar(20)
+  ujian_berlangsung String? @db.VarChar(20)
+  ujian_selesai     String? @db.VarChar(20)
+  jml_benar         Int?
+  jml_salah         Int?
+  nilai_esai        String? @db.VarChar(10)
+  skor              String? @db.VarChar(200)
+  total             String? @db.VarChar(10)
+  status            Int?
+  ipaddress         String? @db.VarChar(20)
+  hasil             Int
+  jawaban           String? @db.Text
+  jawaban_esai      String? @db.LongText
+  nilai_esai2       String? @db.Text
+  online            Int     @default(0)
+  id_soal           String? @db.LongText
+  id_opsi           String? @db.LongText
+  id_esai           String? @db.Text
+  blok              Int     @default(0)
+}
+
+model nilai_temp {
+  id_nilai          Int     @id @default(autoincrement())
+  id_ujian          Int
+  id_mapel          Int
+  id_siswa          Int
+  kode_ujian        String  @db.VarChar(30)
+  ujian_mulai       String  @db.VarChar(20)
+  ujian_berlangsung String? @db.VarChar(20)
+  ujian_selesai     String? @db.VarChar(20)
+  jml_benar         Int?
+  jml_salah         Int?
+  nilai_esai        String? @db.VarChar(10)
+  skor              String? @db.VarChar(200)
+  total             String? @db.VarChar(10)
+  status            Int?
+  ipaddress         String? @db.VarChar(20)
+  hasil             Int
+  jawaban           String? @db.Text
+  jawaban_esai      String? @db.LongText
+  nilai_esai2       String? @db.Text
+  online            Int     @default(0)
+  id_soal           String? @db.LongText
+  id_opsi           String? @db.LongText
+  id_esai           String? @db.Text
+  blok              Int     @default(0)
+}
+
+model pengawas {
+  id_pengawas      Int       @id @default(autoincrement())
+  nip              String?   @db.VarChar(50)
+  nama             String?   @db.VarChar(50)
+  jabatan          String?   @db.VarChar(50)
+  username         String?   @db.VarChar(30)
+  password         String?   @db.Text
+  level            String?   @db.VarChar(10)
+  no_ktp           String?   @db.VarChar(16)
+  tempat_lahir     String?   @db.VarChar(30)
+  tgl_lahir        DateTime? @db.Date
+  jenis_kelamin    String?   @db.VarChar(10)
+  agama            String?   @db.VarChar(10)
+  no_hp            String?   @db.VarChar(13)
+  email            String?   @db.VarChar(50)
+  alamat_jalan     String?   @db.VarChar(255)
+  rt_rw            String?   @db.VarChar(8)
+  dusun            String?   @db.VarChar(50)
+  kelurahan        String?   @db.VarChar(50)
+  kecamatan        String?   @db.VarChar(30)
+  kode_pos         Int?
+  nuptk            String?   @db.VarChar(20)
+  bidang_studi     String?   @db.VarChar(50)
+  jenis_ptk        String?   @db.VarChar(50)
+  tgs_tambahan     String?   @db.VarChar(50)
+  status_pegawai   String?   @db.VarChar(50)
+  status_aktif     String?   @db.VarChar(20)
+  status_nikah     String?   @db.VarChar(20)
+  sumber_gaji      String?   @db.VarChar(30)
+  ahli_lab         String?   @db.VarChar(10)
+  nama_ibu         String?   @db.VarChar(40)
+  nama_suami       String?   @db.VarChar(50)
+  nik_suami        String?   @db.VarChar(20)
+  pekerjaan        String?   @db.VarChar(20)
+  tmt              DateTime? @db.Date
+  keahlian_isyarat String?   @db.VarChar(10)
+  kewarganegaraan  String?   @db.VarChar(10)
+  npwp             String?   @db.VarChar(16)
+  foto             String?   @db.VarChar(50)
+  ptk_id           String?   @db.VarChar(50)
+  password2        String?   @db.Text
+  ruang            String?   @db.VarChar(50)
+}
+
+model pengumuman {
+  id_pengumuman Int      @id @default(autoincrement())
+  type          String   @db.VarChar(30)
+  judul         String   @db.VarChar(255)
+  user          Int
+  text          String   @db.LongText
+  date          DateTime @default(now()) @db.Timestamp(0)
+}
+
+model pk {
+  id_pk            String  @id @db.VarChar(10)
+  program_keahlian String  @db.VarChar(50)
+  jurusan_id       String? @db.VarChar(10)
+}
+
+model referensi_jurusan {
+  jurusan_id            String  @id @db.VarChar(10)
+  nama_jurusan          String? @db.VarChar(100)
+  untuk_sma             Int
+  untuk_smk             Int
+  jenjang_pendidikan_id Int?
+}
+
+model ruang {
+  kode_ruang String @id @db.VarChar(10)
+  keterangan String @db.VarChar(30)
+}
+
+model savsoft_options {
+  oid            Int     @id @default(autoincrement())
+  qid            Int
+  q_option       String  @db.Text
+  q_option_match String? @db.VarChar(1000)
+  score          Float   @default(0) @db.Float
+}
+
+model savsoft_qbank {
+  qid                 Int    @id @default(autoincrement())
+  question_type       String @default("Multiple Choice Single Answer") @db.VarChar(100)
+  question            String @db.Text
+  description         String @db.Text
+  cid                 Int
+  lid                 Int
+  no_time_served      Int    @default(0)
+  no_time_corrected   Int    @default(0)
+  no_time_incorrected Int    @default(0)
+  no_time_unattempted Int    @default(0)
+}
+
+model semester {
+  semester_id     String                 @id @db.VarChar(5)
+  tahun_ajaran_id String                 @db.VarChar(4)
+  nama_semester   String                 @db.VarChar(50)
+  semester        Int
+  periode_aktif   semester_periode_aktif
+  tanggal_mulai   DateTime               @db.Date
+  tanggal_selesai DateTime               @db.Date
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model server {
+  kode_server String @db.VarChar(20)
+  nama_server String @db.VarChar(30)
+  status      String @db.VarChar(15)
+
+  @@ignore
+}
+
+model sesi {
+  kode_sesi String @id @db.VarChar(10)
+  nama_sesi String @db.VarChar(30)
+}
+
+model session {
+  id           Int    @id @default(autoincrement())
+  session_time String @db.VarChar(10)
+  session_hash String @db.Text
+}
+
+model setting {
+  id_setting   Int     @id @default(autoincrement())
+  aplikasi     String? @db.VarChar(100)
+  kode_sekolah String? @db.VarChar(10)
+  sekolah      String? @db.VarChar(50)
+  jenjang      String? @db.VarChar(5)
+  kepsek       String? @db.VarChar(50)
+  nip          String? @db.VarChar(30)
+  alamat       String? @db.Text
+  kecamatan    String? @db.VarChar(50)
+  kota         String? @db.VarChar(30)
+  telp         String? @db.VarChar(20)
+  fax          String? @db.VarChar(20)
+  web          String? @db.VarChar(50)
+  email        String? @db.VarChar(50)
+  logo         String? @db.Text
+  header       String? @db.Text
+  header_kartu String? @db.Text
+  nama_ujian   String? @db.Text
+  versi        String? @db.VarChar(10)
+  ip_server    String? @db.VarChar(100)
+  waktu        String? @db.VarChar(50)
+  server       String? @db.VarChar(50)
+  id_server    String? @db.VarChar(50)
+  url_host     String? @db.VarChar(50)
+  token_api    String? @db.VarChar(50)
+  sekolah_id   String? @db.VarChar(50)
+  npsn         String? @db.VarChar(10)
+  db_versi     String? @db.VarChar(10)
+  bc           String  @db.VarChar(50)
+}
+
+model sinkron {
+  nama_data      String  @id @db.VarChar(50)
+  data           String? @db.VarChar(50)
+  jumlah         String? @db.VarChar(50)
+  tanggal        String? @db.VarChar(50)
+  status_sinkron Int?
+}
+
+model siswa {
+  id_siswa             Int       @id @default(autoincrement())
+  id_kelas             String?   @db.VarChar(11)
+  idpk                 String?   @db.VarChar(10)
+  nis                  String?   @db.VarChar(30)
+  no_peserta           String?   @db.VarChar(30)
+  nama                 String?   @db.VarChar(50)
+  level                String?   @db.VarChar(5)
+  ruang                String?   @db.VarChar(10)
+  sesi                 Int?
+  username             String?   @db.VarChar(50)
+  password             String?   @db.Text
+  foto                 String?   @db.VarChar(255)
+  server               String?   @db.VarChar(255)
+  jenis_kelamin        String?   @db.VarChar(30)
+  tempat_lahir         String?   @db.VarChar(100)
+  tanggal_lahir        DateTime? @db.Date
+  agama                String?   @db.VarChar(10)
+  kebutuhan_khusus     String?   @db.VarChar(20)
+  alamat               String?   @db.Text
+  rt                   String?   @db.VarChar(5)
+  rw                   String?   @db.VarChar(5)
+  dusun                String?   @db.VarChar(100)
+  kelurahan            String?   @db.VarChar(100)
+  kecamatan            String?   @db.VarChar(100)
+  kode_pos             Int?
+  jenis_tinggal        String?   @db.VarChar(100)
+  alat_transportasi    String?   @db.VarChar(100)
+  hp                   String?   @db.VarChar(15)
+  email                String?   @db.VarChar(150)
+  skhun                Int?
+  no_kps               String?   @db.VarChar(50)
+  nama_ayah            String?   @db.VarChar(150)
+  tahun_lahir_ayah     Int?
+  pendidikan_ayah      String?   @db.VarChar(50)
+  pekerjaan_ayah       String?   @db.VarChar(100)
+  penghasilan_ayah     String?   @db.VarChar(100)
+  nohp_ayah            String?   @db.VarChar(15)
+  nama_ibu             String?   @db.VarChar(150)
+  tahun_lahir_ibu      Int?
+  pendidikan_ibu       String?   @db.VarChar(50)
+  pekerjaan_ibu        String?   @db.VarChar(100)
+  penghasilan_ibu      String?   @db.VarChar(100)
+  nohp_ibu             Int?
+  nama_wali            String?   @db.VarChar(150)
+  tahun_lahir_wali     Int?
+  pendidikan_wali      String?   @db.VarChar(50)
+  pekerjaan_wali       String?   @db.VarChar(100)
+  penghasilan_wali     String?   @db.VarChar(50)
+  angkatan             Int?
+  nisn                 String?   @db.VarChar(50)
+  peserta_didik_id     String?   @db.VarChar(50)
+  semester_id          String?   @db.VarChar(10)
+  rombongan_belajar_id String?   @db.VarChar(50)
+  status               String?   @default("aktif") @db.VarChar(10)
+  online               Int?      @default(0)
+}
+
+model soal {
+  id_soal    Int     @id @default(autoincrement())
+  id_mapel   Int
+  mapel      mapel   @relation(fields: [id_mapel], references: [id_mapel])
+  nomor      Int?
+  soal       String? @db.LongText
+  jenis      Int?
+  pilA       String? @db.LongText
+  pilB       String? @db.LongText
+  pilC       String? @db.LongText
+  pilD       String? @db.LongText
+  pilE       String? @db.LongText
+  jawaban    String? @db.VarChar(1)
+  file       String? @db.MediumText
+  file1      String? @db.MediumText
+  fileA      String? @db.MediumText
+  fileB      String? @db.MediumText
+  fileC      String? @db.MediumText
+  fileD      String? @db.MediumText
+  fileE      String? @db.MediumText
+  pembahasan String  @db.LongText
+}
+
+model token {
+  id_token     Int      @id @default(autoincrement())
+  token        String   @db.VarChar(6)
+  time         DateTime @default(now()) @db.Timestamp(0)
+  masa_berlaku DateTime @db.Time(0)
+}
+
+model tugas {
+  id_tugas    Int      @id @default(autoincrement())
+  id_guru     Int      @default(0)
+  kelas       String   @db.Text
+  mapel       String   @db.VarChar(255)
+  judul       String   @db.VarChar(50)
+  tugas       String   @db.LongText
+  file        String?  @db.VarChar(255)
+  tgl_mulai   DateTime @db.DateTime(0)
+  tgl_selesai DateTime @db.DateTime(0)
+  tgl         DateTime @default(now()) @db.Timestamp(0)
+  status      Int?
+}
+
+model ujian {
+  id_ujian      Int       @id @default(autoincrement())
+  kode_nama     String?   @default("0") @db.VarChar(255)
+  id_pk         String    @db.VarChar(255)
+  id_guru       Int
+  id_mapel      Int
+  kode_ujian    String?   @db.VarChar(30)
+  nama          String    @db.VarChar(100)
+  jml_soal      Int
+  jml_esai      Int
+  bobot_pg      Int
+  opsi          Int
+  bobot_esai    Int
+  tampil_pg     Int
+  tampil_esai   Int
+  lama_ujian    Int
+  tgl_ujian     DateTime  @db.DateTime(0)
+  tgl_selesai   DateTime  @db.DateTime(0)
+  waktu_ujian   DateTime? @db.Time(0)
+  selesai_ujian DateTime? @db.Time(0)
+  level         String    @db.VarChar(5)
+  kelas         String    @db.VarChar(255)
+  sesi          String?   @db.VarChar(1)
+  acak          Int
+  token         Int
+  status        Int?
+  hasil         Int?
+  kkm           String?   @db.VarChar(128)
+  ulang         Int?
+  soal_agama    String?   @db.VarChar(50)
+  reset         Int?
+  ulang_kkm     Int
+  btn_selesai   Int
+  pelanggaran   Int
+}
+
+enum semester_periode_aktif {
+  true  @map("1")
+  false @map("0")
+}
