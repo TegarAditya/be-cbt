@@ -5,7 +5,7 @@ services:
     image: "oven/bun:debian"
     entrypoint: []
     command: "/bin/sh -c 'bun install && bunx prisma generate && bun run --watch src/index.ts'"
-    ports: [ "3000:3000" ]
+    ports: [ "${PORT}:3000" ]
     volumes: [ "./:/home/bun/app" ]
     deploy:
       resources:
