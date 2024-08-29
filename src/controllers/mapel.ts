@@ -72,10 +72,31 @@ export async function getMapelById(id: number) {
             },
         })
 
+        const data = mapel?.soal.map((item) => {
+            return {
+                nomor: item.nomor,
+                soal: item.soal,
+                jawaban: `pil${item.jawaban}`,
+                pembahasan: item.pembahasan,
+                pilA: item.pilA,
+                pilB: item.pilB,
+                pilC: item.pilC,
+                pilD: item.pilD,
+                pilE: item.pilE,
+                file: item.file,
+                file1: item.file1,
+                fileA: item.fileA,
+                fileB: item.fileB,
+                fileC: item.fileC,
+                fileD: item.fileD,
+                fileE: item.fileE,
+            }
+        })
+
         return {
             success: true,
             message: "Success",
-            data: mapel,
+            data: data,
         }
     } catch (e: unknown) {
         console.error(`Error getting mapel: ${e}`)

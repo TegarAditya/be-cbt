@@ -14,7 +14,16 @@ const app = new Elysia()
                     title: "Elysia Documentation",
                     version: "1.0.0",
                 },
-                tags: [{ name: "Mapel", description: "Fetch Mapel Endpoint" }],
+                tags: [
+                    {
+                        name: "Mapel",
+                        description: "Fetch Mapel Endpoint",
+                    },
+                    {
+                        name: "Healthcheck",
+                        description: "Healthcheck Endpoint",
+                    },
+                ],
             },
         })
     )
@@ -26,7 +35,7 @@ app.group("/api", (app) => app.use(ApiRoutes))
 app.group("/healthcheck", (app) => app.use(HealthCheckRouter))
 
 app.listen({
-    port: 3000,
+    port: process.env.PORT || 3000,
     reusePort: true,
 })
 
