@@ -4,6 +4,8 @@ services:
     entrypoint: []
     command: "/bin/sh -c 'bun install && bunx prisma generate && bun run --watch src/index.ts'"
     ports: [ "${PORT}:${PORT}" ]
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
     volumes: [ "./:/home/bun/app" ]
     deploy:
       resources:
