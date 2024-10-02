@@ -1,21 +1,5 @@
 import { OpenAPIV3 } from "openapi-types"
 
-export const listMapelQuery:
-    | OpenAPIV3.ReferenceObject[]
-    | OpenAPIV3.ParameterObject[] = [
-    {
-        name: "type",
-        in: "query",
-        allowEmptyValue: true,
-        description: "Type of mapel",
-        schema: {
-            type: "string",
-            enum: ["cbt", "pas", "pts", "all"],
-        },
-        example: true,
-    },
-]
-
 export const listMapelResponse: OpenAPIV3.ResponsesObject = {
     200: {
         description: "Success",
@@ -154,7 +138,7 @@ export const detailMapelResponse: OpenAPIV3.ResponsesObject = {
                                 {
                                     nomor: 1,
                                     soal: "Pihak yang melakukan kegiatan untuk menghasilkan barang dan jasa guna memenuhi kepentingan orang lain disebut dengan..",
-                                    jawaban: "C",
+                                    jawaban: "pilC",
                                     pembahasan: "",
                                     pilA: "Distribusi ",
                                     pilB: "Konsumen",
