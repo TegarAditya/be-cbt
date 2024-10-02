@@ -1,35 +1,50 @@
 import { Elysia } from "elysia"
-import { getMapel, getMapelById } from "@/controllers/mapel"
-import { getMapelByIdParamsValidation, listAllMapelQueryValidation } from "@/validations/mapel"
-import { detailMapelResponse, listMapelQuery, listMapelResponse } from "@/docs/mapel"
+import { getMapel, getMapelById } from "@/handlers/mapel"
+import {
+    getMapelByIdParamsValidation,
+    getMapelByIdQueryValidation,
+    listAllMapelQueryValidation,
+} from "@/validations/mapel"
+import { detailMapelResponse, listMapelResponse } from "@/docs/mapel"
+import { MapelIdType, MapelType } from "@/types/mapel"
 
 const ApiRoutes = new Elysia({ prefix: "/mapel" })
     .get(
         "/",
         (req) => {
-            const { type } = req.query
-            return getMapel(type as "cbt" | "pts" | "pas" | "all")
+            const { type, limit, page, search } = req.query
+            return getMapel(
+                type as MapelType,
+                limit as number,
+                page as number,
+                search as string
+            )
         },
         {
             query: listAllMapelQueryValidation,
             detail: {
                 summary: "List Mapel",
+                description: "List of mapel",
                 tags: ["Mapel"],
-                parameters: listMapelQuery,
                 responses: listMapelResponse,
             },
         }
     )
     .get(
         "/:id",
-        (req) => {
-            const { id } = req.params
-            return getMapelById(id)
+        async ({ params, set, query }) => {
+            const { id } = params
+            const { type } = query
+            const data = await getMapelById(id, type as MapelIdType)
+            set.status = data?.success ? 200 : 404
+            return data
         },
         {
+            query: getMapelByIdQueryValidation,
             params: getMapelByIdParamsValidation,
             detail: {
                 summary: "Detail Mapel",
+                description: "Detail of mapel by id, id_ujian, or id_referrer",
                 tags: ["Mapel"],
                 responses: detailMapelResponse,
             },
