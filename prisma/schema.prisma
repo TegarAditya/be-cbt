@@ -1,7 +1,7 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["relationJoins"]
-  binaryTargets = ["debian-openssl-3.0.x", "debian-openssl-1.1.x"]
+  binaryTargets   = ["debian-openssl-3.0.x", "debian-openssl-1.1.x"]
 }
 
 datasource db {
@@ -117,6 +117,8 @@ model mapel {
   status      String   @db.VarChar(2)
   kkm         Int?
   soal_agama  String?  @db.VarChar(50)
+  id_ujian    Int?
+  id_refferer Int?
   soal        soal[]
 }
 
