@@ -2,7 +2,6 @@ import { Elysia } from "elysia"
 import { getMapel, getMapelById } from "@/handlers/mapel"
 import {
     getMapelByIdParamsValidation,
-    getMapelByIdQueryValidation,
     listAllMapelQueryValidation,
 } from "@/validations/mapel"
 import { detailMapelResponse, listMapelResponse } from "@/docs/mapel"
@@ -34,13 +33,11 @@ const ApiRoutes = new Elysia({ prefix: "/mapel" })
         "/:id",
         async ({ params, set, query }) => {
             const { id } = params
-            const { type } = query
-            const data = await getMapelById(id, type as MapelIdType)
+            const data = await getMapelById(id)
             set.status = data?.success ? 200 : 404
             return data
         },
         {
-            query: getMapelByIdQueryValidation,
             params: getMapelByIdParamsValidation,
             detail: {
                 summary: "Detail Mapel",

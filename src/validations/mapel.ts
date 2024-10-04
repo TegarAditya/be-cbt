@@ -25,14 +25,6 @@ export const listAllMapelQueryValidation = t.Object({
     ),
 })
 
-export const getMapelByIdQueryValidation = t.Object({
-    type: t.String({
-        enum: ["id", "id_ujian", "id_referrer"],
-        default: "id",
-        description: "Type of mapel_id to be fetched",
-    }),
-})
-
 export const getMapelByIdParamsValidation = t.Object({
     id: t.Numeric({
         description: "ID of the mapel",

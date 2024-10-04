@@ -118,7 +118,7 @@ model mapel {
   kkm         Int?
   soal_agama  String?  @db.VarChar(50)
   id_ujian    Int?
-  id_refferer Int?
+  id_referrer Int?
   soal        soal[]
 }
 
