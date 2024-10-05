@@ -1,6 +1,6 @@
-import { db } from "@/libs/database"
-import { MapelIdType, MapelType } from "@/types/mapel"
-import { soal } from "@prisma/client"
+import { db, dbSd, dbSma, dbSmp } from "@/libs/database"
+import { MapelType } from "@/types/mapel"
+import { PrismaClient, soal } from "@prisma/client"
 
 /** UTILITY FUNCTIONS */
 
@@ -34,22 +34,17 @@ const transformSoalData = (soal: soal[]) => {
 /**
  * Retrieves a mapel (subject) based on the provided criteria.
  *
+ * @param id - The ID of the mapel to retrieve.
+ * @param dbClient - The PrismaClient instance for the database.
  * @returns A promise that resolves to an object containing the success status, message, and optionally the mapel data.
  *
  * @throws Will throw an error if the database query fails.
  */
-const getMapelByCriteria = async (id: number) => {
+const getMapelByCriteria = async (id: number, dbClient: PrismaClient) => {
     try {
-        const mapel = await db.mapel.findFirst({
+        const mapel = await dbClient.mapel.findFirst({
             where: {
-                OR: [
-                    {
-                        id_ujian: id,
-                    },
-                    {
-                        id_referrer: id,
-                    },
-                ],
+                OR: [{ id_ujian: id }, { id_referrer: id }],
             },
             select: {
                 id_mapel: true,
@@ -98,8 +93,8 @@ const getMapelByCriteria = async (id: number) => {
             message: "Success",
             data,
         }
-    } catch (e: unknown) {
-        console.error(`Error getting mapel: ${e}`)
+    } catch (error) {
+        console.error(`Error getting mapel: ${error}`)
         return {
             success: false,
             message: "An error occurred",
@@ -112,11 +107,12 @@ const getMapelByCriteria = async (id: number) => {
 /**
  * Fetches a list of mapel (subjects) from the database based on the specified type, limit, page, and search criteria.
  *
- * @param {MapelType} type - The type of mapel to fetch. Can be "cbt", "pts", "pas", or "all".
- * @param {number} [limit=25] - The maximum number of records to fetch. Defaults to 25.
- * @param {number} [page=1] - The page number for pagination. Defaults to 1.
- * @param {string} [search=""] - The search string to filter mapel names. Defaults to an empty string.
+ * @param type - The type of mapel to fetch. Can be "cbt", "pts", "pas", or "all".
+ * @param limit - The maximum number of records to fetch. Defaults to 25.
+ * @param page - The page number for pagination. Defaults to 1.
+ * @param search - The search string to filter mapel names. Defaults to an empty string.
  * @returns A promise that resolves to an object containing the success status, message, and fetched data.
+ *
  * @throws Will log an error message if there is an issue fetching the mapel.
  */
 export async function getMapel(
@@ -159,11 +155,11 @@ export async function getMapel(
 
         return {
             success: true,
-            message: "record fetched",
+            message: "Records fetched",
             data: mapel,
         }
-    } catch (e: unknown) {
-        console.error(`Error getting mapel: ${e}`)
+    } catch (error) {
+        console.error(`Error getting mapel: ${error}`)
     }
 }
 
@@ -171,12 +167,23 @@ export async function getMapel(
  * Retrieves a mapel (subject) based on the provided ID and type.
  *
  * @param id - The ID of the mapel to retrieve.
+ * @param level - The education level for which to fetch the mapel. Defaults to "fallback".
  * @returns The mapel that matches the provided criteria.
+ *
  * @throws Will log an error message if there is an issue retrieving the mapel.
  */
-export const getMapelById = (id: number) => {
+export const getMapelById = (id: number, level: string = "fallback") => {
     try {
-        return getMapelByCriteria(id)
+        switch (level) {
+            case "sd":
+                return getMapelByCriteria(id, dbSd)
+            case "smp":
+                return getMapelByCriteria(id, dbSmp)
+            case "sma":
+                return getMapelByCriteria(id, dbSma)
+            default:
+                return getMapelByCriteria(id, db)
+        }
     } catch (error) {
         console.error(`Error getting mapel by id: ${error}`)
     }
