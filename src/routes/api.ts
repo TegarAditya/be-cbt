@@ -44,7 +44,7 @@ const ApiRoutes = new Elysia({ prefix: "/mapel" })
             query: getMapelByIdQueryValidation,
             detail: {
                 summary: "Detail Mapel",
-                description: "Detail of mapel by id, id_ujian, or id_referrer",
+                description: "Detail of mapel by ID and level",
                 tags: ["Mapel"],
                 responses: detailMapelResponse,
             },
