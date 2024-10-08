@@ -1,4 +1,7 @@
-import { PrismaClient, soal } from "@prisma/client";
+import { SubjectEnum } from "@/enums/subject"
+import { db, dbSd, dbSma, dbSmp } from "@/libs/database"
+import { MapelLevelType, MapelType } from "@/types/mapel"
+import { PrismaClient, soal } from "@prisma/client"
 
 /** UTILITY FUNCTIONS */
 
@@ -10,9 +13,9 @@ import { PrismaClient, soal } from "@prisma/client";
  */
 export const decodeUnicode = (str: string): string => {
     return str.replace(/\\u([0-9A-Fa-f]{4})/g, (match, grp) => {
-        return String.fromCharCode(parseInt(grp, 16));
-    });
-};
+        return String.fromCharCode(parseInt(grp, 16))
+    })
+}
 
 /**
  * Transforms an array of `soal` objects by mapping each item to a new structure.
@@ -38,76 +41,45 @@ export const transformSoalData = (soal: soal[]) => {
         fileC: decodeUnicode(item.fileC as string),
         fileD: decodeUnicode(item.fileD as string),
         fileE: decodeUnicode(item.fileE as string),
-    }));
-};
+    }))
+}
 
 /**
- * Retrieves a mapel (subject) based on the provided criteria.
- *
- * @param id - The ID of the mapel to retrieve.
- * @param dbClient - The PrismaClient instance for the database.
- * @returns A promise that resolves to an object containing the success status, message, and optionally the mapel data.
- *
- * @throws Will throw an error if the database query fails.
+ * Returns the appropriate prefix for mapel based on the type.
+ * @param type - The type of mapel ("cbt", "pts", "pas", "all").
+ * @returns A string representing the prefix.
  */
-export const fetchMapelByCriteria = async (id: number, dbClient: PrismaClient) => {
-    try {
-        const mapel = await dbClient.mapel.findFirst({
-            where: {
-                OR: [{ id_ujian: id }, { id_referrer: id }],
-            },
-            select: {
-                id_mapel: true,
-                id_ujian: true,
-                id_referrer: true,
-                nama: true,
-                soal: {
-                    orderBy: { nomor: "asc" },
-                    select: {
-                        nomor: true,
-                        soal: true,
-                        jawaban: true,
-                        pembahasan: true,
-                        pilA: true,
-                        pilB: true,
-                        pilC: true,
-                        pilD: true,
-                        pilE: true,
-                        file: true,
-                        file1: true,
-                        fileA: true,
-                        fileB: true,
-                        fileC: true,
-                        fileD: true,
-                        fileE: true,
-                    },
-                },
-            },
-        })
-
-        if (!mapel) {
-            return {
-                success: false,
-                message: "Data not found",
-            }
-        }
-
-        const data = {
-            id_mapel: mapel.id_mapel,
-            nama: mapel.nama,
-            soal: transformSoalData(mapel.soal as soal[]),
-        }
-
-        return {
-            success: true,
-            message: "Success",
-            data: data,
-        }
-    } catch (error) {
-        console.error(`Error getting mapel: ${error}`)
-        return {
-            success: false,
-            message: "An error occurred",
-        }
+export const getMapelPrefix = (type: MapelType): string => {
+    const options = {
+        cbt: "CBT",
+        pts: "PTS",
+        pas: "PAS",
+        all: "",
     }
+    return options[type] || ""
+}
+
+/**
+ * Returns the appropriate Prisma database client based on the education level.
+ * @param level - The level of education ("sd", "smp", "sma", "fallback").
+ * @returns The corresponding PrismaClient instance.
+ */
+export const getDbClient = (level: MapelLevelType): PrismaClient => {
+    const dbClients = {
+        sd: dbSd,
+        smp: dbSmp,
+        sma: dbSma,
+        fallback: db,
+    }
+    return dbClients[level] || db
+}
+
+/**
+ * Retrieves an array of string keys from the `SubjectEnum` object.
+ * Filters out any keys that are numeric.
+ *
+ * @returns {string[]} An array of string keys from the `SubjectEnum`.
+ */
+export const getSubjectEnumArray = (): string[] => {
+    return Object.keys(SubjectEnum).filter((key) => isNaN(Number(key)))
 }

@@ -1,3 +1,4 @@
+import { getSubjectEnumArray } from "@/utils"
 import { t } from "elysia"
 
 export const listAllMapelQueryValidation = t.Object({
@@ -9,7 +10,7 @@ export const listAllMapelQueryValidation = t.Object({
     limit: t.Optional(
         t.Numeric({
             default: 25,
-            maximum: 100,
+            maximum: 1000,
         })
     ),
     page: t.Optional(
@@ -23,13 +24,26 @@ export const listAllMapelQueryValidation = t.Object({
             examples: ["MTK", "IPA", "BJTI"],
         })
     ),
+    mapel: t.Optional(
+        t.String({
+            enum: getSubjectEnumArray(),
+            description: "Name of the mapel",
+        })
+    ),
+    kelas: t.Optional(
+        t.Numeric({
+            minimum: 1,
+            maximum: 12,
+            description: "Class of the mapel",
+        })
+    ),
 })
 
 export const getMapelByIdQueryValidation = t.Object({
     level: t.String({
         enum: ["sd", "smp", "sma", "fallback"],
         description: "Level (jenjang) of the mapel",
-    })
+    }),
 })
 
 export const getMapelByIdParamsValidation = t.Object({

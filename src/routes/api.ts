@@ -6,18 +6,21 @@ import {
     listAllMapelQueryValidation,
 } from "@/validations/mapel"
 import { detailMapelResponse, listMapelResponse } from "@/docs/mapel"
-import { MapelType } from "@/types/mapel"
+import { MapelLevelType, MapelType } from "@/types/mapel"
+import { SubjectType } from "@/enums/subject"
 
 const ApiRoutes = new Elysia({ prefix: "/mapel" })
     .get(
         "/",
-        (req) => {
-            const { type, limit, page, search } = req.query
+        ({ query }) => {
+            const { type, limit, page, search, mapel, kelas } = query
             return getMapel(
                 type as MapelType,
                 limit as number,
                 page as number,
-                search as string
+                search as string,
+                mapel as SubjectType,
+                kelas as number
             )
         },
         {
@@ -35,7 +38,7 @@ const ApiRoutes = new Elysia({ prefix: "/mapel" })
         async ({ params, set, query }) => {
             const { id } = params
             const { level } = query
-            const data = await getMapelById(id, level)
+            const data = await getMapelById(id, level as MapelLevelType)
             set.status = data?.success ? 200 : 404
             return data
         },
