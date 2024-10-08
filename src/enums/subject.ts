@@ -55,8 +55,8 @@ export const SubjectEnum: object = {
     BahasaIndonesia: ["bahasa-indonesia", "INDO", "BAHASAINDONESIA"],
     BahasaInggris: ["bahasa-inggris", "ING", "BAHASAINGGRIS"],
     BahasaArab: ["bahasa-arab", "BA", "BARAB", "BAHASAARAB"],
-    BahasaJawaTengah: ["bahasa-jawa-tengah", "BJTE"],
-    BahasaJawaTimur: ["bahasa-jawa-timur", "BJTI"],
+    BahasaJawaTengah: ["bahasa-jawa-tengah", "BJTE", "B.JATENG"],
+    BahasaJawaTimur: ["bahasa-jawa-timur", "BJTI", "B.JATIM"],
     BahasaSunda: ["bahasa-sunda", "SUNDA"],
 
     // Religious studies
@@ -72,7 +72,7 @@ export const SubjectEnum: object = {
     Kimia: ["kimia", "KIM"],
     IPA: ["ipa", "IPA"],
     IPAS: ["ipas", "IPAS"],
-    Informatika: ["informatika", "INF"],
+    Informatika: ["informatika", "INF", "INFOR"],
 
     // Mathematics
     Matematika: ["matematika", "MTK"],
@@ -97,8 +97,8 @@ export const SubjectEnum: object = {
 
     // Vocational and practical subjects
     PKWU: ["pkwu", "PKWU"],
-    Prakarya: ["prakarya", "PRA"],
-    PendidikanPancasila: ["pendidikan-pancasila", "PKN", "PP"],
+    Prakarya: ["prakarya", "PRA", "PRAKARYA"],
+    PendidikanPancasila: ["pendidikan-pancasila", "PKN", "PP", "PENDIDIKANPANCASILA"],
 
     // Miscellaneous
     BK: ["bk", "BK"],
