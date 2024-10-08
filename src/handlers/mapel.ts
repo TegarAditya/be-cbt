@@ -43,9 +43,12 @@ export async function getMapel(
     page: number = 1,
     search: string = "",
     mapel: SubjectType | "" = "",
-    kelas: number | null = null
+    kelas: number | null = null,
+    level: MapelLevelType = "fallback"
 ) {
     try {
+        const dbClient = getDbClient(level)
+
         const whereClause: Prisma.mapelWhereInput = {
             nama: {
                 startsWith: getMapelPrefix(type),
@@ -75,10 +78,12 @@ export async function getMapel(
             whereClause.AND = {
                 nama: {
                     contains: `${kelas}-`,
-                    not: {
-                        contains: "11"
-                    }
                 },
+                NOT: [
+                    { nama: { contains: "10" } },
+                    { nama: { contains: "11" } },
+                    { nama: { contains: "12" } },
+                ],
             }
         } else if (kelas && kelas >= 10) {
             whereClause.AND = {
@@ -88,7 +93,7 @@ export async function getMapel(
             }
         }
 
-        const mapelRecords = await db.mapel.findMany({
+        const mapelRecords = await dbClient.mapel.findMany({
             relationLoadStrategy: "query",
             orderBy: { id_mapel: "desc" },
             where: whereClause,

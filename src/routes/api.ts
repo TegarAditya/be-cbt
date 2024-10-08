@@ -13,14 +13,15 @@ const ApiRoutes = new Elysia({ prefix: "/mapel" })
     .get(
         "/",
         ({ query }) => {
-            const { type, limit, page, search, mapel, kelas } = query
+            const { type, limit, page, search, mapel, kelas, level } = query
             return getMapel(
                 type as MapelType,
                 limit as number,
                 page as number,
                 search as string,
                 mapel as SubjectType,
-                kelas as number
+                kelas as number,
+                level as MapelLevelType
             )
         },
         {

@@ -37,6 +37,12 @@ export const listAllMapelQueryValidation = t.Object({
             description: "Class of the mapel",
         })
     ),
+    level: t.Optional(
+        t.String({
+            enum: ["sd", "smp", "sma", "fallback"],
+            description: "Level (jenjang) of the mapel",
+        })
+    )
 })
 
 export const getMapelByIdQueryValidation = t.Object({
