@@ -71,7 +71,16 @@ export async function getMapel(
             }))
         }
 
-        if (kelas) {
+        if (kelas && kelas < 10) {
+            whereClause.AND = {
+                nama: {
+                    contains: `${kelas}-`,
+                    not: {
+                        contains: "11"
+                    }
+                },
+            }
+        } else if (kelas && kelas >= 10) {
             whereClause.AND = {
                 nama: {
                     contains: `${kelas}-`,
