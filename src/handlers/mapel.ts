@@ -128,6 +128,54 @@ export async function getMapel(
     }
 }
 
+export const getMapelCombined = async (
+    type: MapelType,
+    limit: number = 25,
+    page: number = 1,
+    search: string = "",
+    mapel: SubjectType | "" = "",
+    kelas: number | null = null,
+    level: MapelLevelType = "fallback"
+) => {
+    const fetchMapel = async (levelToFetch: MapelLevelType) => {
+        return await getMapel(
+            type,
+            limit,
+            page,
+            search,
+            mapel,
+            kelas,
+            levelToFetch
+        )
+    }
+
+    const mainMapel = await fetchMapel(level)
+
+    let fallbackMapel
+    if (level !== "fallback") {
+        fallbackMapel = await fetchMapel("fallback")
+    } else {
+        fallbackMapel = {
+            success: true,
+            message: "Data fetched before",
+            data: [],
+        }
+    }
+
+    const addOriginToData = (data: any[], origin: MapelLevelType) => {
+        return data.map((item) => ({ ...item, origin }))
+    }
+
+    return {
+        success: true,
+        message: "Success",
+        data: [
+            ...addOriginToData(mainMapel.data || [], level),
+            ...addOriginToData(fallbackMapel.data || [], "fallback"),
+        ],
+    }
+}
+
 /**
  * Retrieves a mapel (subject) based on the provided ID and type.
  *

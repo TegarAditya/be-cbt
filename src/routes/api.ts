@@ -1,5 +1,5 @@
 import { Elysia } from "elysia"
-import { getMapel, getMapelById } from "@/handlers/mapel"
+import { getMapelById, getMapelCombined } from "@/handlers/mapel"
 import {
     getMapelByIdParamsValidation,
     getMapelByIdQueryValidation,
@@ -14,7 +14,7 @@ const ApiRoutes = new Elysia({ prefix: "/mapel" })
         "/",
         ({ query }) => {
             const { type, limit, page, search, mapel, kelas, level } = query
-            return getMapel(
+            return getMapelCombined(
                 type as MapelType,
                 limit as number,
                 page as number,
