@@ -38,8 +38,12 @@ const ApiRoutes = new Elysia({ prefix: "/mapel" })
         "/:id",
         async ({ params, set, query }) => {
             const { id } = params
-            const { level } = query
-            const data = await getMapelById(id, level as MapelLevelType)
+            const { level, noscan } = query
+            const data = await getMapelById(
+                id,
+                level as MapelLevelType,
+                noscan
+            )
             set.status = data?.success ? 200 : 404
             return data
         },

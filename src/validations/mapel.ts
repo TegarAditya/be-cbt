@@ -50,6 +50,12 @@ export const getMapelByIdQueryValidation = t.Object({
         enum: ["sd", "smp", "sma", "fallback"],
         description: "Level (jenjang) of the mapel",
     }),
+    noscan: t.Optional(
+        t.Boolean({
+            default: false,
+            description: "Whether the ID is from scan or not. If true, the ID will be treated as a IdUjian. If false, the ID will be treated as a normal ID.",
+        })
+    ),
 })
 
 export const getMapelByIdParamsValidation = t.Object({
