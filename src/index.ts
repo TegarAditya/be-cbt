@@ -9,7 +9,7 @@ import swaggerConfig from "@/config/swagger"
 const app = new Elysia()
     .use(swagger(swaggerConfig))
     .use(cors())
-    .use(rateLimit({ max: 60, duration: 60000 }))
+    // .use(rateLimit({ max: 60, duration: 60000 }))
 
 app.group("/api", (app) => app.use(ApiRoutes))
 
