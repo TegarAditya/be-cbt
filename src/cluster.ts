@@ -1,7 +1,7 @@
 import { spawn } from "bun";
 import { AVAILABLE_CPU_COUNT } from "@/constants/cpu";
 
-const MAX_CPU_COUNT = Number(process.env.MAX_CPU_COUNT) || navigator.hardwareConcurrency;
+const MAX_CPU_COUNT = Number(process.env.MAX_CPUS) || navigator.hardwareConcurrency;
 const cpus = MAX_CPU_COUNT > AVAILABLE_CPU_COUNT ? AVAILABLE_CPU_COUNT : MAX_CPU_COUNT;
 const buns = new Array(cpus);
 
