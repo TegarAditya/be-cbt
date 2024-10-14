@@ -12,6 +12,7 @@ import { Prisma, soal } from "@prisma/client"
 /**
  * Retrieves a list of subjects (mapel) for a given class (kelas) and level.
  *
+ * @param type - The type of mapel to fetch.
  * @param level - The level of the mapel.
  * @param kelas - The class number.
  * @returns A promise that resolves to an array of subjects.
@@ -27,15 +28,7 @@ export async function getMapelSubjectByKelas(
         let listMapel: SubjectType[] = []
 
         async function getFilledMapel(mapel: SubjectType, type: MapelType) {
-            return await getMapelCombined(
-                type,
-                100,
-                1,
-                "",
-                mapel,
-                kelas,
-                level
-            )
+            return await getMapelCombined(type, 1000, 1, "", mapel, kelas, level)
         }
 
         const promises = getSubjectEnumKeys().map(async (subject) => {
@@ -65,6 +58,8 @@ export async function getMapelSubjectByKelas(
  * @param mapel - The name of the mapel to filter. Defaults to an empty string.
  * @param kelas - The class of the mapel to filter. Defaults to null.
  * @returns A promise that resolves to an object containing the success status, message, and fetched data.
+ *
+ * @throws Will log an error message if the retrieval process fails.
  */
 export async function getMapel(
     type: MapelType,
@@ -168,6 +163,8 @@ export async function getMapel(
  * @param {number | null} [kelas=null] - The class level to filter mapel.
  * @param {MapelLevelType} [level="fallback"] - The level of mapel to fetch.
  * @returns The combined mapel data with origin information.
+ *
+ * @throws Will log an error message if the retrieval process fails.
  */
 export const getMapelCombined = async (
     type: MapelType,
@@ -233,7 +230,15 @@ export async function getMapelById(
     noscan: boolean = false
 ) {
     try {
-        const dbClient = getDbClient(level)
+        let dbClient = getDbClient(level)
+
+        const isExist = await dbClient.mapel.findFirst({
+            where: { id_mapel: id },
+        })
+
+        if (!isExist) {
+            dbClient = getDbClient("fallback")
+        }
 
         const whereClause: Prisma.mapelWhereInput = {}
 
