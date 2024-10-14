@@ -45,6 +45,25 @@ export const listAllMapelQueryValidation = t.Object({
     )
 })
 
+export const listMapelSubjectByKelasQueryValidation = t.Object({
+    type: t.String({
+        enum: ["cbt", "pts", "pas", "all"],
+        default: "pts",
+        description: "Type of mapel to be fetched",
+    }),
+    kelas: t.Numeric({
+        minimum: 1,
+        maximum: 12,
+        default: 1,
+        description: "Class of the mapel",
+    }),
+    level: t.String({
+        enum: ["sd", "smp", "sma"],
+        default: "sd",
+        description: "Level (jenjang) of the mapel",
+    }),
+})
+
 export const getMapelByIdQueryValidation = t.Object({
     level: t.String({
         enum: ["sd", "smp", "sma", "fallback"],
