@@ -14,6 +14,7 @@ RUN bunx prisma generate
 COPY ./src ./src
 
 ENV NODE_ENV=production
+ENV PORT=3000
 
 RUN bun build \
     --compile \
@@ -36,4 +37,4 @@ ENV NODE_ENV=production
 
 CMD ["./server"]
 
-EXPOSE 3031
+EXPOSE 3000
