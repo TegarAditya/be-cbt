@@ -1,25 +1,55 @@
-import { getEnumValues, SubjectType } from "@/enums/subject"
+import {
+    getSubjectEnumKeys,
+    getSubjectEnumValues,
+    SubjectType,
+} from "@/enums/subject"
 import { MapelLevelType, MapelType } from "@/types/mapel"
 import { getDbClient, getMapelPrefix, transformSoalData } from "@/utils"
 import { Prisma, soal } from "@prisma/client"
 
 /** HANDLER FUNCTIONS */
 
-export async function getMapelSubjectByKelas(kelas: number) {
+/**
+ * Retrieves a list of subjects (mapel) for a given class (kelas) and level.
+ *
+ * @param level - The level of the mapel.
+ * @param kelas - The class number.
+ * @returns A promise that resolves to an array of subjects.
+ *
+ * @throws Will log an error message if there is an issue retrieving the subjects.
+ */
+export async function getMapelSubjectByKelas(
+    type: MapelType,
+    kelas: number,
+    level: MapelLevelType
+): Promise<SubjectType[] | undefined> {
     try {
-        const isSD = kelas <= 6
-        const isSMP = kelas > 6 && kelas <= 9
-        const isSMA = kelas > 9
+        let listMapel: SubjectType[] = []
 
-        const subjectList = () => {
-            if (isSD) {
-                //
-            } else if (isSMP) {
-                //
-            } else if (isSMA) {
-                //
-            }
+        async function getFilledMapel(mapel: SubjectType, type: MapelType) {
+            return await getMapelCombined(
+                type,
+                100,
+                1,
+                "",
+                mapel,
+                kelas,
+                level
+            )
         }
+
+        const promises = getSubjectEnumKeys().map(async (subject) => {
+            const isMapelExist = await getFilledMapel(subject, type).then(
+                (res) => res.data.length > 0
+            )
+            if (isMapelExist) {
+                listMapel.push(subject)
+            }
+        })
+
+        await Promise.all(promises)
+
+        return listMapel.sort()
     } catch (error) {
         console.error(`Error getting mapel by kelas: ${error}`)
     }
@@ -56,7 +86,7 @@ export async function getMapel(
         }
 
         if (mapel) {
-            const mapelValues = getEnumValues(mapel)
+            const mapelValues = getSubjectEnumValues(mapel)
 
             if (!mapelValues) {
                 return {
@@ -194,7 +224,7 @@ export const getMapelCombined = async (
  * @param level - The database level to use for the query. Defaults to "fallback".
  * @param noscan - If true, only searches by `id_mapel`. If false, searches by `id_ujian` or `id_referrer`.
  * @returns An object containing the success status, a message, and the mapel data if found.
- * 
+ *
  * @throws Will log an error message if the retrieval process fails.
  */
 export async function getMapelById(
