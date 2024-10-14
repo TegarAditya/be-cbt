@@ -22,12 +22,9 @@ import { PrismaClient, soal } from "@prisma/client"
 async function decodeString(str: string): Promise<string> {
     if (!str) return ""
 
-    let decodedStr = str.replace(/\\u([0-9A-Fa-f]{4})/g, (match, grp) => {
+    const decodedStr = str.replace(/\\u([0-9A-Fa-f]{4})/g, (match, grp) => {
         return String.fromCharCode(parseInt(grp, 16))
     })
-
-    // Replace the image URL with base64 if there are any images
-    // decodedStr = await replaceImageWithBase64(decodedStr)
 
     return decodedStr
 }
