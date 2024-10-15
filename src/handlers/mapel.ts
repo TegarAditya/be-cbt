@@ -27,17 +27,22 @@ export async function getMapelSubjectByKelas(
     try {
         let listMapel: SubjectType[] = []
 
-        async function getFilledMapel(mapel: SubjectType, type: MapelType) {
-            return await getMapelCombined(type, 1000, 1, "", mapel, kelas, level)
+        const isSubjectHasMapel = async (subject: SubjectType) => {
+            const res = await getMapelCombined(
+                type,
+                1000,
+                1,
+                "",
+                subject,
+                kelas,
+                level
+            )
+            return res.data.length > 0
         }
 
         const promises = getSubjectEnumKeys().map(async (subject) => {
-            const isMapelExist = await getFilledMapel(subject, type).then(
-                (res) => res.data.length > 0
-            )
-            if (isMapelExist) {
-                listMapel.push(subject)
-            }
+            const isMapelExist = await isSubjectHasMapel(subject)
+            if (isMapelExist) listMapel.push(subject)
         })
 
         await Promise.all(promises)
@@ -232,20 +237,18 @@ export async function getMapelById(
     try {
         let dbClient = getDbClient(level)
 
+        const whereClause: Prisma.mapelWhereInput = noscan
+            ? { id_mapel: id }
+            : { OR: [{ id_ujian: id }, { id_referrer: id }] }
+
+        // Check if the mapel exists in the current database client (level)
         const isExist = await dbClient.mapel.findFirst({
-            where: { id_mapel: id },
+            where: whereClause,
         })
 
+        // If the mapel does not exist in the current level, use the fallback database client
         if (!isExist) {
             dbClient = getDbClient("fallback")
-        }
-
-        const whereClause: Prisma.mapelWhereInput = {}
-
-        if (noscan) {
-            whereClause.id_mapel = id
-        } else {
-            whereClause.OR = [{ id_ujian: id }, { id_referrer: id }]
         }
 
         const mapel = await dbClient.mapel.findFirst({
